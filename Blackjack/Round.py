@@ -1,6 +1,5 @@
 from Blackjack.Deck import Deck
 
-SUITS = ["Hearts", "Diamonds", "Clubs", "Spades"]
 VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 
 class Round():
@@ -48,7 +47,7 @@ class Round():
 
         return sum
     
-    def print_state(self, force_end = False):
+    def print_terminal_state(self, force_end = False):
         player_sum = self.get_sum_for_player(True)
         dealer_sum = self.get_sum_for_player(False)
 
@@ -58,7 +57,7 @@ class Round():
         print(f"\nCards for dealer: {[card.value for card in self.dealer_cards]}")
         print(f"Sum for dealer: {dealer_sum}")
 
-        round_state = self.get_state(force_end)
+        round_state = self.get_terminal_state(force_end)
 
         if round_state == 1:
             print("Player won")
@@ -67,7 +66,7 @@ class Round():
         elif round_state == 0:
             print("Draw")
 
-    def get_state(self, force_end = False):
+    def get_terminal_state(self, force_end = False):
         player_sum = self.get_sum_for_player(True)
         dealer_sum = self.get_sum_for_player(False)
         
@@ -87,3 +86,10 @@ class Round():
                 return 0
         else:
             return None # Game still in progress
+        
+    def get_agent_state(self):
+        return {
+            "agent_sum": self.get_sum_for_player(True),
+            "dealer_sum": self.get_sum_for_player(False),
+            "uses_ace": "A" in [card.value for card in self.player_cards]
+        }
