@@ -1,5 +1,6 @@
 from Blackjack.Agent.Agent import Agent
 from Blackjack.Action import Action
+
 from random import choice, random
 from math import exp
 
@@ -38,7 +39,7 @@ class MonteCarloOnPolicyAgent(Agent):
             self.first_state = False
 
             chosen_action = choice(possible_actions)
-        elif random() < (1 / self.episode_count): # selected randomly
+        elif random() < self.epsilon: # selected randomly
             chosen_action = choice(possible_actions)  
         else: # selected greedily
             q_values_by_action = {action: self.get_q_value(state.get_agent_state(), action) for action in possible_actions}
