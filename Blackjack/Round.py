@@ -30,6 +30,7 @@ class Round():
             cards = self.dealer_cards
 
         contains_ace = False
+        uses_special_ace = False
         sum = 0
 
         for card in cards:
@@ -42,14 +43,15 @@ class Round():
                 sum += VALUES.index(card.value) + 1
 
         # Allow ace to count as 11 rather than 1
-        if contains_ace and sum <= 11:
+        if contains_ace and sum <= 11 and not uses_special_ace:
             sum += 10
+            uses_special_ace = True
 
-        return sum
+        return sum, uses_special_ace
     
     def print_terminal_state(self, force_end = False):
-        player_sum = self.get_sum_for_player(True)
-        dealer_sum = self.get_sum_for_player(False)
+        player_sum = self.get_sum_for_player(True) [0]
+        dealer_sum = self.get_sum_for_player(False) [0]
 
         print(f"\nCards for player: {[card.value for card in self.player_cards]}")
         print(f"Sum for player: {player_sum}")
@@ -67,8 +69,8 @@ class Round():
             print("Draw")
 
     def get_terminal_state(self, force_end = False):
-        player_sum = self.get_sum_for_player(True)
-        dealer_sum = self.get_sum_for_player(False)
+        player_sum = self.get_sum_for_player(True) [0]
+        dealer_sum = self.get_sum_for_player(False) [0]
         
         if dealer_sum > 21:
             return 1 # Win
@@ -89,7 +91,7 @@ class Round():
         
     def get_agent_state(self):
         return {
-            "agent_sum": self.get_sum_for_player(True),
-            "dealer_sum": self.get_sum_for_player(False),
-            "uses_ace": "A" in [card.value for card in self.player_cards]
+            "agent_sum": self.get_sum_for_player(True) [0],
+            "dealer_card": self.get_sum_for_player(False) [0],
+            "uses_ace": self.get_sum_for_player(True) [1]
         }

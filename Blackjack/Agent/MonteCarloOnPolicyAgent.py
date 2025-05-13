@@ -5,7 +5,7 @@ from random import choice, random
 from math import exp
 
 class MonteCarloOnPolicyAgent(Agent):
-    def __init__(self, exploring_starts, epsilon_type = 1):
+    def __init__(self, exploring_starts, epsilon_type):
         super().__init__()
 
         self.exploring_starts = exploring_starts
@@ -15,7 +15,7 @@ class MonteCarloOnPolicyAgent(Agent):
         self.epsilon = 0
         self.epsilon_type = epsilon_type
         
-        # the values are hard coded since the episode count is 1
+        # consider k = 1 (the episode count is 1)
         if self.epsilon_type == 1: # epsilon is 1 / k
             self.epsilon = 1
         elif self.epsilon_type == 2: # epsilon is e ^ (-k / 1000) 
@@ -28,9 +28,9 @@ class MonteCarloOnPolicyAgent(Agent):
     def get_policy(self, state):
         # hit below 12, stand above 12
         # no need to update n counter or q values since these are trivial states
-        if state.get_sum_for_player(True) < 12:
+        if state.get_sum_for_player(True) [0] < 12:
             return Action.HIT
-        elif state.get_sum_for_player(True) == 21:
+        elif state.get_sum_for_player(True) [0] == 21:
             return Action.STAND
 
         possible_actions = [action for action in Action]

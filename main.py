@@ -7,7 +7,7 @@ class Game():
 
         action = "h"
 
-        while action == "h" and self.round.get_terminal_state() == None and self.round.get_sum_for_player(True) != 21:
+        while action == "h" and self.round.get_terminal_state() == None and self.round.get_sum_for_player(True) [0] != 21:
             self.round.print_terminal_state()
 
             print(self.round.get_agent_state())
@@ -30,13 +30,13 @@ class Game():
             return
         
         # Automatically stand for player if they have 21 from the start, or if they reach 21 after hitting
-        if self.round.get_sum_for_player(True) == 21:
+        if self.round.get_sum_for_player(True) [0] == 21:
             self.round.print_terminal_state()
             self.round.stand() # Change turn to dealer
 
         dealer = Dealer()
 
-        while dealer.get_policy(self.round.get_sum_for_player(False)) == True and self.round.get_terminal_state() == None:
+        while dealer.get_policy(self.round.get_sum_for_player(False) [0]) == True and self.round.get_terminal_state() == None:
             print("\nDealer hits")
             self.round.hit()
 
