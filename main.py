@@ -1,5 +1,6 @@
 from Blackjack.Round import Round
 from Blackjack.Dealer import Dealer
+from Blackjack.Action import Action
 
 class Game():
     def play_round(self):
@@ -9,8 +10,6 @@ class Game():
 
         while action == "h" and self.round.get_terminal_state() == None and self.round.get_sum_for_player(True) [0] != 21:
             self.round.print_terminal_state()
-
-            print(self.round.get_agent_state())
 
             action = input("\nDo you want to hit (h) or stand (s)?: ")
 
@@ -36,7 +35,7 @@ class Game():
 
         dealer = Dealer()
 
-        while dealer.get_policy(self.round.get_sum_for_player(False) [0]) == True and self.round.get_terminal_state() == None:
+        while dealer.get_policy(self.round.get_sum_for_player(False) [0]) == Action.HIT and self.round.get_terminal_state() == None:
             print("\nDealer hits")
             self.round.hit()
 

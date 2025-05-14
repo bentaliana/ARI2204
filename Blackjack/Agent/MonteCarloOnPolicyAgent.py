@@ -26,11 +26,11 @@ class MonteCarloOnPolicyAgent(Agent):
             raise ValueError("Epsilon type not understood")
 
     def get_policy(self, state):
-        # hit below 12, stand above 12
+        # hit below 12, stand above 21
         # no need to update n counter or q values since these are trivial states
         if state.get_sum_for_player(True) [0] < 12:
             return Action.HIT
-        elif state.get_sum_for_player(True) [0] == 21:
+        elif state.get_sum_for_player(True) [0] >= 21:
             return Action.STAND
 
         possible_actions = [action for action in Action]
@@ -61,6 +61,11 @@ class MonteCarloOnPolicyAgent(Agent):
 
             self.update_q_value(state, action, new_expected_value)
 
+    def end_episode(self):
+        self.episode_count += 1
+        self.current_episode = []
+        self.first_state = True
+
         # updating the epsilon value
         if self.epsilon_type == 1: # epsilon is 1 / k
             self.epsilon = 1 / self.episode_count
@@ -68,7 +73,3 @@ class MonteCarloOnPolicyAgent(Agent):
             self.epsilon = exp(-self.episode_count / 1000)
         elif self.epsilon_type == 3: # epsilon is e ^ (-k / 10000)
             self.epsilon = exp(-self.episode_count / 10000)
-
-        self.episode_count += 1
-        self.current_episode = []
-        self.first_state = True
