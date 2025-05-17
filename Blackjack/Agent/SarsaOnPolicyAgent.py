@@ -28,9 +28,9 @@ class SarsaOnPolicyAgent(Agent):
     def get_policy(self, state):
         # hit below 12, stand above 21 always
         # no need to update n counter or q values since these are trivial states
-        if state.get_sum_for_player(True) [0] < 12:
+        if state ["agent_sum"] < 12:
             return Action.HIT
-        elif state.get_sum_for_player(True) [0] >= 21:
+        elif state ["agent_sum"] >= 21:
             return Action.STAND
 
         possible_actions = [action for action in Action]
@@ -38,12 +38,12 @@ class SarsaOnPolicyAgent(Agent):
         if random() < self.epsilon: # selected randomly
             chosen_action = choice(possible_actions)  
         else: # selected greedily
-            q_values_by_action = {action: self.get_q_value(state.get_agent_state(), action) for action in possible_actions}
+            q_values_by_action = {action: self.get_q_value(state, action) for action in possible_actions}
 
             chosen_action = max(q_values_by_action, key = q_values_by_action.get)
 
-        self.increment_n_counter(state.get_agent_state(), chosen_action)
-        self.current_episode.append((state.get_agent_state(), chosen_action))
+        self.increment_n_counter(state, chosen_action)
+        self.current_episode.append((state, chosen_action))
 
         return chosen_action
     
