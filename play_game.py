@@ -45,5 +45,4 @@ class Game():
         self.round.print_terminal_state(True)
 
 game = Game()
-
 game.play_round()

@@ -21,17 +21,18 @@ class QLearningOffPolicyAgent(Agent):
         if self.epsilon_type == 1:
             return 0.1
         elif self.epsilon_type == 2:
-            return 1/self.episode_count
+            return 1 / self.episode_count
         elif self.epsilon_type == 3:
-            return exp(-self.episode_count/1000)
+            return exp(-self.episode_count / 1000)
         elif self.epsilon_type == 4:
-            return exp(-self.episode_count/10000)
-        else: raise ValueError("Invalid epsilon")
+            return exp(-self.episode_count / 10000)
+        else: 
+            raise ValueError("Invalid epsilon")
 
     def get_policy(self, state):
-        if state["agent_sum"] < 12:
+        if state ["agent_sum"] < 12:
             return Action.HIT
-        elif state["agent_sum"] >=21:
+        elif state ["agent_sum"] >=21:
             return Action.STAND
         
         possible_actions = list(Action)
@@ -53,14 +54,14 @@ class QLearningOffPolicyAgent(Agent):
             return
         
         prev_state, prev_action = self.current_episode[-1]
-        alpha = 1/(self.get_n_count(prev_state, prev_action)+1)
+        alpha = 1 / (self.get_n_count(prev_state, prev_action)+1)
 
         # finding max 
         next_state = next_state.get_agent_state()
         max_q_next = max([self.get_q_value(next_state, a) for a in Action])
 
         prev_q =  self.get_q_value(prev_state, prev_action)
-        new_q = prev_q + alpha *((reward if reward is not None else 0) + max_q_next - prev_q)
+        new_q = prev_q + alpha * ((reward if reward is not None else 0) + max_q_next - prev_q)
         self.update_q_value(prev_state, prev_action, new_q)
 
     def end_episode(self):

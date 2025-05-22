@@ -10,24 +10,23 @@ class DoubleQOffPolicyAgent(Agent):
 
         self.episode_count = 1
         self.current_episode = []
-        self.epsilon = 0
         self.epsilon_type = epsilon_type
+        self.epsilon = self.compute_epsilon()
 
         self.q1_values = {}
         self.q2_values = {}
-
-        # consider k = 1 (the episode count is 1)
-        if self.epsilon_type == 1:
-            self.epsilon = 0.1
-        elif self.epsilon_type == 2: # epsilon is 1 / k
-            self.epsilon = 1
-        elif self.epsilon_type == 3: # epsilon is e ^ (-k / 1000) 
-            self.epsilon = exp(-1 / 1000)
-        elif self.epsilon_type == 4: # epsilon is e ^ (-k / 10000)
-            self.epsilon = exp(-1 / 10000)
-        else:
-            raise ValueError("Epsilon type not understood")
         
+    def compute_epsilon(self):
+        if self.epsilon_type == 1:
+            return 0.1
+        elif self.epsilon_type == 2:
+            return 1 / self.episode_count
+        elif self.epsilon_type == 3:
+            return exp(-self.episode_count / 1000)
+        elif self.epsilon_type == 4:
+            return exp(-self.episode_count / 10000)
+        else: 
+            raise ValueError("Invalid epsilon")
       
     def update_q1_value(self, state, action, value):
         self.q1_values[(frozenset(state.items()), action)] = value
@@ -69,7 +68,7 @@ class DoubleQOffPolicyAgent(Agent):
 
         return chosen_action
     
-    def update_agent(self, next_state, next_action, reward):
+    def update_agent(self, next_state, reward):
         if not self.current_episode:
             return
 
@@ -81,7 +80,7 @@ class DoubleQOffPolicyAgent(Agent):
 
         if random() < 0.5:
             q1_values_next = {a: self.get_q1_value(next_state, a) for a in Action}
-            a_max = max(q1_values_next, key=q1_values_next.get)
+            a_max = max(q1_values_next, key = q1_values_next.get)
             next_q = self.get_q2_value(next_state, a_max)
 
             prev_q = self.get_q1_value(prev_state, prev_action)
@@ -89,7 +88,7 @@ class DoubleQOffPolicyAgent(Agent):
             self.update_q1_value(prev_state, prev_action, new_q)
         else:
             q2_values_next = {a: self.get_q2_value(next_state, a) for a in Action}
-            a_max = max(q2_values_next, key=q2_values_next.get)
+            a_max = max(q2_values_next, key = q2_values_next.get)
             next_q = self.get_q1_value(next_state, a_max)
 
             prev_q = self.get_q2_value(prev_state, prev_action)
@@ -100,13 +99,4 @@ class DoubleQOffPolicyAgent(Agent):
     def end_episode(self):
         self.episode_count += 1
         self.current_episode = []
-
-        # updating the epsilon value
-        if self.epsilon_type == 1:
-            self.epsilon = 0.1
-        elif self.epsilon_type == 2: # epsilon is 1 / k
-            self.epsilon = 1 / self.episode_count
-        elif self.epsilon_type == 3: # epsilon is e ^ (-k / 1000) 
-            self.epsilon = exp(-self.episode_count / 1000)
-        elif self.epsilon_type == 4: # epsilon is e ^ (-k / 10000)
-            self.epsilon = exp(-self.episode_count / 10000)
+        self.epsilon = self.compute_epsilon()

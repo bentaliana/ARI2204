@@ -10,20 +10,20 @@ class SarsaOnPolicyAgent(Agent):
 
         self.episode_count = 1
         self.current_episode = []
-        self.epsilon = 0
         self.epsilon_type = epsilon_type
+        self.epsilon = self.compute_epsilon()
 
-        # consider k = 1 (the episode count is 1)
+    def compute_epsilon(self):
         if self.epsilon_type == 1:
-            self.epsilon = 0.1
-        elif self.epsilon_type == 2: # epsilon is 1 / k
-            self.epsilon = 1
-        elif self.epsilon_type == 3: # epsilon is e ^ (-k / 1000) 
-            self.epsilon = exp(-1 / 1000)
-        elif self.epsilon_type == 4: # epsilon is e ^ (-k / 10000)
-            self.epsilon = exp(-1 / 10000)
-        else:
-            raise ValueError("Epsilon type not understood")
+            return 0.1
+        elif self.epsilon_type == 2:
+            return 1 / self.episode_count
+        elif self.epsilon_type == 3:
+            return exp(-self.episode_count / 1000)
+        elif self.epsilon_type == 4:
+            return exp(-self.episode_count / 10000)
+        else: 
+            raise ValueError("Invalid epsilon")
         
     def get_policy(self, state):
         # hit below 12, stand above 21 always
@@ -66,13 +66,4 @@ class SarsaOnPolicyAgent(Agent):
     def end_episode(self):
         self.episode_count += 1
         self.current_episode = []
-
-        # updating the epsilon value
-        if self.epsilon_type == 1:
-            self.epsilon = 0.1
-        elif self.epsilon_type == 2: # epsilon is 1 / k
-            self.epsilon = 1 / self.episode_count
-        elif self.epsilon_type == 3: # epsilon is e ^ (-k / 1000) 
-            self.epsilon = exp(-self.episode_count / 1000)
-        elif self.epsilon_type == 4: # epsilon is e ^ (-k / 10000)
-            self.epsilon = exp(-self.episode_count / 10000)
+        self.epsilon = self.compute_epsilon()
