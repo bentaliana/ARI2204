@@ -53,15 +53,17 @@ class QLearningOffPolicyAgent(Agent):
         if not self.current_episode:
             return
         
-        prev_state, prev_action = self.current_episode[-1]
-        alpha = 1 / (self.get_n_count(prev_state, prev_action)+1)
+        reward = 0 if reward is None else reward
+        
+        prev_state, prev_action = self.current_episode [-1]
+        alpha = 1 / (self.get_n_count(prev_state, prev_action) + 1)
 
-        # finding max 
+        # finding max Q for successor state, greedily
         next_state = next_state.get_agent_state()
         max_q_next = max([self.get_q_value(next_state, a) for a in Action])
 
-        prev_q =  self.get_q_value(prev_state, prev_action)
-        new_q = prev_q + alpha * ((reward if reward is not None else 0) + max_q_next - prev_q)
+        prev_q = self.get_q_value(prev_state, prev_action)
+        new_q = prev_q + alpha * (reward + max_q_next - prev_q)
         self.update_q_value(prev_state, prev_action, new_q)
 
     def end_episode(self):
