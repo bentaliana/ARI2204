@@ -1,14 +1,9 @@
-
-# SARSAMAX
-
-# lets get staarted!!
+# SARSAMAX: Q-Learning Off Policy
 
 from Blackjack.Agent.Agent import Agent
 from Blackjack.Action import Action
 from random import choice, random
-
 from math import exp
-
 class QLearningOffPolicyAgent(Agent):
     def __init__(self, epsilon_type):
         super().__init__()
@@ -18,6 +13,7 @@ class QLearningOffPolicyAgent(Agent):
         self.epsilon = self.compute_epsilon()
 
     def compute_epsilon(self):
+        # different epsilon types (decay)
         if self.epsilon_type == 1:
             return 0.1
         elif self.epsilon_type == 2:
@@ -30,19 +26,21 @@ class QLearningOffPolicyAgent(Agent):
             raise ValueError("Invalid epsilon")
 
     def get_policy(self, state):
+        # hit if sum<12, stand if sum>=21
         if state ["agent_sum"] < 12:
             return Action.HIT
         elif state ["agent_sum"] >=21:
             return Action.STAND
         
         possible_actions = list(Action)
-        # ε-greedy action
+        # ε-greedy action - explore
         if random() < self.epsilon:
             action = choice(possible_actions)
         else:
             q_vals = {a: self.get_q_value(state, a) for a in possible_actions}
             action = max(q_vals, key = q_vals.get)
 
+        # store most recent (s,a) for update
         self.increment_n_counter(state, action)
         self.current_episode.append((state, action))
 
@@ -51,7 +49,7 @@ class QLearningOffPolicyAgent(Agent):
     def update_agent(self, next_state, reward):
         # getting last (s, a)
         if not self.current_episode:
-            return
+            return # skip if none exist
         
         reward = 0 if reward is None else reward
         
