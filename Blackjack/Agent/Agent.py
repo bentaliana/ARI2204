@@ -20,5 +20,5 @@ class Agent:
         return self.q_values [(frozenset(state.items()), action)]
     
     @abstractmethod
-    def get_policy(self):
+    def get_policy(self, state):
         pass
