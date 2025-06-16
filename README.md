@@ -1,6 +1,6 @@
 # ARI2204: Reinforcement Learning Assignment
 
-<b>Team 6: Alison Attard (0415005L), Ben Taliana (0124705L) and Michael Farrugia (0360505L)</b>
+<b>Team 6: Alison Attard, Ben Taliana and Michael Farrugia</b>
 
 ## System Requirements
 
